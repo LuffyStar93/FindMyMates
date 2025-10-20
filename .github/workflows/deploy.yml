@@ -19,9 +19,11 @@ jobs:
           node-version: 22.18
 
       - name: Install dependencies
+        working-directory: ./frontend
         run: npm install
 
       - name: Build React app
+        working-directory: ./frontend
         run: npm run build
 
       - name: Deploy via FTP
@@ -30,4 +32,4 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: build
+          local-dir: ./frontend/build/
