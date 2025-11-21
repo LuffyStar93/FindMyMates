@@ -1,25 +1,49 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import {
+  Association,
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import sequelize from "../config/db";
+import GameModes from "./GameModes";
+import LabelRanks from "./LabelRanks";
+import Tickets from "./Tickets";
 
-export interface GamesAttributes {
-  idGames: number;
-  name: string;
-  urlImage: string | null;
-}
+export default class Games extends Model<
+  InferAttributes<Games, { omit: "modes" | "ranks" | "tickets" }>,
+  InferCreationAttributes<Games>
+> {
+  declare id: CreationOptional<number>;
+  declare name: string;
+  declare urlImage: string | null;
 
-type GamesCreation = Optional<GamesAttributes, "idGames" | "urlImage">;
+  // Associations (non persistées, alignées avec les alias `as:` utilisés dans les controllers)
+  declare modes?: NonAttribute<GameModes[]>;
+  declare ranks?: NonAttribute<LabelRanks[]>;
+  declare tickets?: NonAttribute<Tickets[]>;
 
-export default class Games extends Model<GamesAttributes, GamesCreation> implements GamesAttributes {
-  public idGames!: number;
-  public name!: string;
-  public urlImage!: string | null;
+  declare static associations: {
+    modes: Association<Games, GameModes>;
+    ranks: Association<Games, LabelRanks>;
+    tickets: Association<Games, Tickets>;
+  };
 }
 
 Games.init(
   {
-    idGames: { type: DataTypes.INTEGER.UNSIGNED, primaryKey: true, autoIncrement: true, field: "Id_Games" },
+    id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true, field: "Id" },
     name: { type: DataTypes.STRING(100), allowNull: false },
     urlImage: { type: DataTypes.STRING(255), allowNull: true, field: "url_image" },
   },
-  { sequelize, tableName: "Games", timestamps: false }
+  {
+    sequelize,
+    tableName: "Games",
+    timestamps: false,
+    indexes: [
+      { fields: ["name"], name: "idx_games_name" },
+    ],
+  }
 );

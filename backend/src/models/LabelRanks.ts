@@ -1,25 +1,73 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import {
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  Optional,
+} from "sequelize";
 import sequelize from "../config/db";
 
 export interface LabelRanksAttributes {
-  idRanks: number;
+  id: number;
   rankName: string;
-  idGames: number;
+  gameId: number;
+  gameModeId: number;
 }
 
-type LabelRanksCreation = Optional<LabelRanksAttributes, "idRanks">;
+type LabelRanksCreationAttributes = Optional<LabelRanksAttributes, "id">;
 
-export default class LabelRanks extends Model<LabelRanksAttributes, LabelRanksCreation> implements LabelRanksAttributes {
-  public idRanks!: number;
+class LabelRanks
+  extends Model<
+    InferAttributes<LabelRanks>,
+    InferCreationAttributes<LabelRanks>
+  >
+  implements LabelRanksAttributes
+{
+  public id!: number;
   public rankName!: string;
-  public idGames!: number;
+  public gameId!: number;
+  public gameModeId!: number;
 }
 
 LabelRanks.init(
   {
-    idRanks: { type: DataTypes.INTEGER.UNSIGNED, primaryKey: true, autoIncrement: true, field: "Id_Ranks" },
-    rankName: { type: DataTypes.STRING(100), allowNull: false, field: "rank_name" },
-    idGames: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, field: "Id_Games" },
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      field: "Id",
+    },
+    rankName: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      field: "rank_name",
+    },
+    gameId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      field: "GameId",
+    },
+    gameModeId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      field: "GameModeId",
+    },
   },
-  { sequelize, tableName: "LabelRanks", timestamps: false }
+  {
+    sequelize,
+    tableName: "LabelRanks",
+    modelName: "LabelRanks",
+    timestamps: false,
+    indexes: [
+      // Empêche les doublons d’un même rang dans le même mode
+      {
+        unique: true,
+        fields: ["GameId", "GameModeId", "rank_name"],
+        name: "uq_rank_per_mode",
+      },
+    ],
+  }
 );
+
+export default LabelRanks;

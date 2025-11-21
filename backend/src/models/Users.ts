@@ -1,34 +1,50 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../config/db";
 
+export type UserRole = "User" | "Admin" | "Moderator";
+
 export interface UsersAttributes {
-  idUsers: number;
+  id: number;
   name: string;
   pseudo: string;
   email: string;
-  reputationScore: number;
+  role: UserRole;
+  password: string;
+  reputationScore: number | null;
   bannedAt: Date | null;
+  discordTag: string | null;
 }
 
-type UsersCreation = Optional<UsersAttributes, "idUsers" | "reputationScore" | "bannedAt">;
+export type UsersCreation = Optional<
+  UsersAttributes,
+  "id" | "role" | "reputationScore" | "bannedAt" | "discordTag"
+>;
 
-export default class Users extends Model<UsersAttributes, UsersCreation> implements UsersAttributes {
-  public idUsers!: number;
+class Users extends Model<UsersAttributes, UsersCreation> implements UsersAttributes {
+  public id!: number;
   public name!: string;
   public pseudo!: string;
   public email!: string;
-  public reputationScore!: number;
+  public role!: UserRole;
+  public password!: string;
+  public reputationScore!: number | null;
   public bannedAt!: Date | null;
+  public discordTag!: string | null;
 }
 
 Users.init(
   {
-    idUsers: { type: DataTypes.INTEGER.UNSIGNED, primaryKey: true, autoIncrement: true, field: "Id_Users" },
+    id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
     name: { type: DataTypes.STRING(100), allowNull: false },
     pseudo: { type: DataTypes.STRING(50), allowNull: false, unique: true },
     email: { type: DataTypes.STRING(100), allowNull: false, unique: true },
+    role: { type: DataTypes.ENUM("User","Admin","Moderator"), allowNull: false, defaultValue: "User" },
+    password: { type: DataTypes.STRING(255), allowNull: false },
     reputationScore: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, field: "reputation_score" },
     bannedAt: { type: DataTypes.DATE, allowNull: true, field: "banned_at" },
+    discordTag: { type: DataTypes.STRING(50), allowNull: true, field: "discord_tag" },
   },
   { sequelize, tableName: "Users", timestamps: false }
 );
+
+export default Users;

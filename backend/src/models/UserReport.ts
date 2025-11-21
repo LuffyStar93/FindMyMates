@@ -2,19 +2,21 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/db";
 
 export interface UserReportAttributes {
-  idUsers: number;
-  idReports: number;
+  userId: number;
+  reportId: number;
 }
 
-export default class UserReport extends Model<UserReportAttributes> implements UserReportAttributes {
-  public idUsers!: number;
-  public idReports!: number;
+class UserReport extends Model<UserReportAttributes> implements UserReportAttributes {
+  public userId!: number;
+  public reportId!: number;
 }
 
 UserReport.init(
   {
-    idUsers: { type: DataTypes.INTEGER.UNSIGNED, primaryKey: true, field: "Id_Users" },
-    idReports: { type: DataTypes.INTEGER.UNSIGNED, primaryKey: true, field: "Id_Reports" },
+    userId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, primaryKey: true },
+    reportId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, primaryKey: true },
   },
   { sequelize, tableName: "UserReport", timestamps: false }
 );
+
+export default UserReport;
