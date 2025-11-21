@@ -5,8 +5,15 @@ import axios, {
 } from 'axios'
 import { getAccessToken, setAccessToken } from './authToken'
 
+// Base URL:
+// - En préprod/prod : VITE_API_URL = https://preprod-fmm.chagnonmaxime.fr/api
+// - En dev : fallback sur /api (proxy Vite ou même origine)
+const BASE_URL =
+  (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
+  '/api'
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: BASE_URL,
   withCredentials: true,
 })
 
@@ -38,6 +45,7 @@ api.interceptors.response.use(
     const original = error.config as (InternalAxiosRequestConfig & { _retry?: boolean })
     const url = original?.url ?? ''
 
+    // On évite la boucle de refresh sur les endpoints auth
     const isAuthEndpoint =
       url.includes('/auth/login') ||
       url.includes('/auth/register') ||
@@ -63,8 +71,11 @@ api.interceptors.response.use(
 
     isRefreshing = true
     try {
+      // refresh est relatif à baseURL => /auth/refresh
       const { data } = await api.post('/auth/refresh')
       const token = (data as any)?.accessToken
+      if (!token) throw new Error('No accessToken in refresh response')
+
       setAccessToken(token)
       flushQueue(null, token)
 
