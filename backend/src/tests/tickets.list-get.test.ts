@@ -1,4 +1,3 @@
-// src/tests/tickets.list-get.test.ts
 import { getTicket, listTickets } from '@/controllers/ticketsController'
 import express from 'express'
 import request from 'supertest'
