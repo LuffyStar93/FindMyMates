@@ -1,0 +1,108 @@
+@use '@/styles/variables' as *;
+
+.root {
+  min-height: calc(100vh - var(--nav-height, 56px));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+}
+
+.card {
+  max-width: 520px;
+  width: 100%;
+  background: var(--color-surface);
+  border-radius: 1.25rem;
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-soft);
+  padding: 1.8rem 1.9rem;
+  text-align: center;
+}
+
+.code {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-accent-soft);
+  margin-bottom: 0.35rem;
+}
+
+.title {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.text {
+  margin: 0 0 1.3rem;
+  font-size: 0.95rem;
+  color: var(--color-text-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+/* bouton principal */
+.primary {
+  background: var(--color-accent);
+  color: #f9fafb;
+  border: 1px solid var(--color-accent-soft);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.8);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.9);
+  }
+}
+
+/* bouton secondaire */
+.secondary {
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-subtle);
+
+  &:hover {
+    background: var(--color-bg-alt);
+    border-color: var(--color-accent-soft);
+  }
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .card {
+    padding: 1.4rem 1.25rem;
+  }
+
+  .code {
+    font-size: 2.4rem;
+  }
+}

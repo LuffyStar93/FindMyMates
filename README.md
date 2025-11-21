@@ -1,46 +1,270 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Find My Mates (FMM)
 
-## Available Scripts
+  
 
-In the project directory, you can run:
+Find My Mates est une application web communautaire pensée pour les joueurs qui veulent trouver rapidement des coéquipiers fiables.
 
-### `npm start`
+Le principe est simple : **je crée un ticket**, d’autres joueurs le rejoignent, puis **une session se lance**. Pendant la session, les participants peuvent **Upvoter ou Downvoter un utilisateur** (+1 / -1) et **signaler** un comportement inapproprié si besoin.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## ✨ Fonctionnalités principales
 
-### `npm test`
+  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+-  **Authentification complète**
 
-### `npm run build`
+- Inscription / connexion
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- JWT + refresh token (sessions persistantes)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Gestion des rôles (User / Moderator / Admin)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  
 
-### `npm run eject`
+-  **Tickets (matchmaking)**
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Création de tickets par jeu et mode de jeu
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Listing avec filtres (jeu, mode, ranked, statut…)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Rejoindre un ticket
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- Fermeture manuelle par le créateur et/ou fermeture automatique à expiration
 
-## Learn More
+  
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+-  **Réputation**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Vote +1 / -1 par ticket pendant la session 
+
+- Score de réputation agrégé sur le profil utilisateur
+
+  
+
+-  **Signalements**
+
+- Formulaire de report (motif + description)
+
+- Tableau admin de modération : lecture, statut, ban/déban utilisateur
+
+  
+
+-  **UI moderne**
+
+- Thème **dark / light**
+
+- Design PC-first, responsive mobile (menu burger, cartes empilées)
+
+---
+
+## 🧱 Stack technique
+
+### Front-end
+
+-  **React + TypeScript** (Vite)
+
+-  **React Router** (navigation SPA)
+
+-  **SCSS modules** + variables CSS (dark/light)
+
+-  **Axios** (client API centralisé)
+
+- Architecture par features (pages, components, context)
+
+  
+
+### Back-end
+
+-  **Node.js + Express + TypeScript**
+
+-  **MySQL**
+
+-  **Sequelize ORM**
+
+- Modèles typés, relations (1–N, N–N via tables de jointure)
+
+-  **Zod** pour la validation des entrées API
+
+- Middlewares sécurité + rate limiting
+
+### CI/CD & Hébergement
+
+-  **GitHub Actions**
+
+- Build + tests backend
+
+- Build frontend
+
+- Déploiement FTP automatique vers **o2switch**
+
+- Branches séparées (develop / preprod / main)
+
+---
+
+## 📂 Structure du repo
+
+```
+
+FindMyMates/
+
+├─ frontend/ # app React (Vite)
+
+│ ├─ src/
+
+│ ├─ public/
+
+│ └─ ...
+
+├─ backend/ # API Node/Express
+
+│ ├─ src/
+
+│ ├─ tests/
+
+│ └─ ...
+
+└─ .github/workflows/ # pipelines CI/CD
+
+```
+
+--- 
+
+## 🚀 Lancer le projet en local
+
+  
+
+### Prérequis
+
+- Node.js ≥ 18 (22 recommandé)
+
+- MySQL ≥ 8
+
+- npm
+
+
+### 1) Backend
+
+```bash
+
+cd  backend
+
+npm  install
+
+```
+
+  
+
+Créer un fichier `.env` :
+
+  
+
+```env
+
+PORT=3000
+
+DB_HOST=localhost
+
+DB_USER=root
+
+DB_PASSWORD=your_password
+
+DB_NAME=fmm
+
+JWT_SECRET=change_me
+
+JWT_REFRESH_SECRET=change_me_too
+
+CORS_ORIGIN=http://localhost:5173
+
+```
+
+Puis :
+
+```bash
+
+npm  run  dev
+
+```
+
+API disponible sur `http://localhost:3000/api`.
+
+Tests :
+
+```bash
+
+npm  test
+
+```
+
+### 2) Frontend
+
+```bash
+
+cd  frontend
+
+npm  install
+
+``` 
+
+Créer un fichier `.env` :
+
+```env
+
+VITE_API_URL=http://localhost:3000/api
+
+```
+
+  
+
+Puis :
+
+  
+
+```bash
+
+npm  run  dev
+
+```
+
+App disponible sur `http://localhost:5173`.
+
+---
+
+  
+
+## 🧪 Tests
+
+Le projet utilise **Jest + Supertest** côté backend pour couvrir les routes critiques :
+
+- création de ticket
+
+- join ticket
+
+- listing / get ticket
+
+- update / close / delete ticket
+
+- création de report
+
+---
+ 
+
+## 📌 Roadmap (bêta)
+
+  
+
+- Tests d’intégration supplémentaires (réputation, admin)
+
+- Upload de preuves dans les reports
+
+- Notifications (tickets rejoints / reports traités)
+
+- Améliorations UX mobile
+
+---
+
+## 👤 Auteur
+
+Projet réalisé par **Maxime** dans le cadre de la formation *Concepteur Développeur d’Applications*.
