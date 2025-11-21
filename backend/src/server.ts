@@ -50,7 +50,7 @@ sequelize.authenticate()
 app.get(['/health', '/api/health'], (_req, res) => res.json({ ok: true }))
 
 // --- Routes principales ---
-app.use('/api', apiRouter)
+app.use('/', apiRouter)
 
 // --- 404 + gestion globale des erreurs ---
 app.use(notFound)
