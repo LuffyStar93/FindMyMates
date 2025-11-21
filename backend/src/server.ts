@@ -47,7 +47,7 @@ sequelize.authenticate()
   .catch((err) => console.error('DB error:', err))
 
 // --- Health check ---
-app.get('/health', (_req, res) => res.json({ ok: true }))
+app.get(['/health', '/api/health'], (_req, res) => res.json({ ok: true }))
 
 // --- Routes principales ---
 app.use('/api', apiRouter)
