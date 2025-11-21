@@ -54,7 +54,15 @@ jobs:
             **/tests/**
             **/*.map
 
-      # 2) Upload package.json + lock (pour install deps côté o2switch)
+      # 2) Préparer un dossier ne contenant QUE package.json + lock
+      - name: Prepare backend package files (PREPROD)
+        working-directory: ./backend
+        run: |
+          rm -rf _pkg
+          mkdir _pkg
+          cp package.json package-lock.json _pkg/
+
+      # 3) Upload uniquement ces 2 fichiers
       - name: Deploy backend package files via FTP (PREPROD)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -62,12 +70,10 @@ jobs:
           username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
           password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
           server-dir: ${{ secrets.PREPROD_FTP_BACKEND_SERVER_DIR }}
-          local-dir: ./backend/
+          local-dir: ./backend/_pkg/
           dangerous-clean-slate: false
           exclude: |
-            **/*
-            !package.json
-            !package-lock.json
+            **/.git*
 
   frontend:
     name: Build & Deploy Frontend (PREPROD)
@@ -99,7 +105,7 @@ jobs:
           server: ${{ secrets.PREPROD_FTP_SERVER }}
           username: ${{ secrets.PREPROD_FTP_USERNAME }}
           password: ${{ secrets.PREPROD_FTP_PASSWORD }}
-          server-dir: ${{ secrets.PREPROD_FTP_DIR }} 
+          server-dir: ${{ secrets.PREPROD_FTP_DIR }} # ex: /
           local-dir: ./frontend/dist/
           dangerous-clean-slate: true
           exclude: |
