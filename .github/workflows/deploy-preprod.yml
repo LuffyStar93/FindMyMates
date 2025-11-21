@@ -3,7 +3,7 @@ name: Deploy FMM PREPROD (Front + Back) to o2switch
 on:
   push:
     branches:
-      - pre-prod
+      - preprod
 
 concurrency:
   group: deploy-preprod
