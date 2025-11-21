@@ -104,13 +104,12 @@ jobs:
           server: ${{ secrets.PREPROD_FTP_BACKEND_SERVER }}
           username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
           password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
-
           server-dir: ${{ secrets.PREPROD_FTP_DIR }} # ex: /preprod-fmm.chagnonmaxime.fr/luffystar93_preprod/
           local-dir: ./frontend/dist/
-
           dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/node_modules/**
             api/**
             api/.htaccess
+            .htaccess
