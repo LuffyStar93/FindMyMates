@@ -1,0 +1,107 @@
+name: Deploy FMM PROD (Front + Back) to o2switch
+
+on:
+  push:
+    branches:
+      - prod
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Build & Deploy Backend (PROD)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: ./backend/package-lock.json
+
+      - name: Install dependencies (backend)
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run tests (backend)
+        working-directory: ./backend
+        run: npm test
+
+      - name: Build backend (tsc)
+        working-directory: ./backend
+        run: npm run build
+
+      # 1) Upload dist/
+      - name: Deploy backend dist via FTP (PROD)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.PROD_FTP_BACKEND_SERVER }}
+          username: ${{ secrets.PROD_FTP_BACKEND_USERNAME }}
+          password: ${{ secrets.PROD_FTP_BACKEND_PASSWORD }}
+          server-dir: ${{ secrets.PROD_FTP_BACKEND_SERVER_DIR }}
+          local-dir: ./backend/dist/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/node_modules/**
+            **/src/**
+            **/tests/**
+            **/*.map
+
+      # 2) Upload package.json + lock (pour install deps côté o2switch)
+      - name: Deploy backend package files via FTP (PROD)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.PROD_FTP_BACKEND_SERVER }}
+          username: ${{ secrets.PROD_FTP_BACKEND_USERNAME }}
+          password: ${{ secrets.PROD_FTP_BACKEND_PASSWORD }}
+          server-dir: ${{ secrets.PROD_FTP_BACKEND_SERVER_DIR }}
+          local-dir: ./backend/
+          dangerous-clean-slate: false
+          exclude: |
+            **/*
+            !package.json
+            !package-lock.json
+
+  frontend:
+    name: Build & Deploy Frontend (PROD)
+    runs-on: ubuntu-latest
+    needs: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - name: Install dependencies (frontend)
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Deploy frontend via FTP (PROD)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.PROD_FTP_SERVER }}
+          username: ${{ secrets.PROD_FTP_USERNAME }}
+          password: ${{ secrets.PROD_FTP_PASSWORD }}
+          server-dir: ${{ secrets.PROD_FTP_DIR }} 
+          local-dir: ./frontend/dist/
+          dangerous-clean-slate: true
+          exclude: |
+            **/.git*
+            **/node_modules/**
