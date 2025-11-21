@@ -11,66 +11,50 @@ concurrency:
 
 jobs:
   backend:
-    name: Build & Deploy Backend (PREPROD)
-    runs-on: ubuntu-latest
+  name: Build & Deploy Backend (PREPROD)
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: npm
-          cache-dependency-path: ./backend/package-lock.json
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        cache: npm
+        cache-dependency-path: ./backend/package-lock.json
 
-      - name: Install dependencies (backend)
-        working-directory: ./backend
-        run: npm ci
+    - name: Install dependencies (backend)
+      working-directory: ./backend
+      run: npm ci
 
-      - name: Run tests (backend)
-        working-directory: ./backend
-        run: npm test
+    - name: Run tests (backend)
+      working-directory: ./backend
+      run: npm test
 
-      - name: Build backend (tsc)
-        working-directory: ./backend
-        run: npm run build
+    - name: Build backend (tsc)
+      working-directory: ./backend
+      run: npm run build
 
-      - name: Deploy backend dist via FTP (PREPROD)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.PREPROD_FTP_BACKEND_SERVER }}
-          username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
-          password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
-          server-dir: ${{ secrets.PREPROD_FTP_BACKEND_SERVER_DIR }} # ex: /fmm-backend-preprod/
-          local-dir: ./backend/dist/
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/node_modules/**
-            **/src/**
-            **/tests/**
-            **/*.map
+    - name: Copy package files into dist
+      working-directory: ./backend
+      run: |
+        cp package.json dist/
+        cp package-lock.json dist/
 
-      - name: Prepare backend package files (PREPROD)
-        working-directory: ./backend
-        run: |
-          rm -rf _pkg
-          mkdir _pkg
-          cp package.json package-lock.json _pkg/
-
-      - name: Deploy backend package files via FTP (PREPROD)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.PREPROD_FTP_BACKEND_SERVER }}
-          username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
-          password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
-          server-dir: ${{ secrets.PREPROD_FTP_BACKEND_SERVER_DIR }}
-          local-dir: ./backend/_pkg/
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
+    - name: Deploy backend dist via FTP (PREPROD)
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.PREPROD_FTP_BACKEND_SERVER }}
+        username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
+        password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
+        server-dir: ${{ secrets.PREPROD_FTP_BACKEND_SERVER_DIR }} # /fmm-backend-preprod/
+        local-dir: ./backend/dist/
+        dangerous-clean-slate: false
+        exclude: |
+          **/.git*
+          **/*.map
 
   frontend:
     name: Build & Deploy Frontend (PREPROD)
