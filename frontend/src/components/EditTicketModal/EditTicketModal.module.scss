@@ -1,0 +1,166 @@
+@use '@/styles/variables' as *;
+
+/* Overlay plein écran */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+/* Carte modale */
+.modal {
+  width: min(540px, calc(100vw - 2rem));
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-soft);
+  padding: 1.25rem 1.5rem;
+}
+
+/* Titre */
+.title {
+  margin: 0 0 0.9rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* Contenu du formulaire */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Champs */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+
+  span {
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+}
+
+/* Inputs & selects */
+.input,
+.select {
+  width: 100%;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.5rem 0.7rem;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  font: inherit;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-input-border-focus);
+  box-shadow: 0 0 0 1px var(--color-input-border-focus);
+}
+
+/* Petit texte d’aide sous les champs */
+.hint {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  color: var(--color-text-soft);
+}
+
+/* Messages d’erreur */
+.error {
+  margin: 0.5rem 0 0;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.55rem;
+  font-size: 0.85rem;
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border: 1px solid rgba(248, 113, 113, 0.45);
+}
+
+/* Zone des boutons */
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+/* Bouton secondaire (Annuler) */
+.btnGhost {
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.87rem;
+  font-weight: 500;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-soft);
+  color: var(--color-text-soft);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &:hover {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-accent-soft);
+  }
+}
+
+/* Bouton principal (Enregistrer) */
+.btnPrimary {
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.87rem;
+  font-weight: 600;
+  border: 1px solid var(--color-accent-soft);
+  background: var(--color-accent);
+  color: #f9fafb;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    opacity var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* Mobile : un peu plus compact */
+@media (max-width: 480px) {
+  .modal {
+    padding: 1rem 1.1rem;
+  }
+
+  .actions {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,109 @@
+@use '@/styles/variables' as *;
+
+.root {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.header {
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.6rem;
+    font-weight: 650;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--color-text-soft);
+  }
+}
+
+/* Bandeau d’avertissement */
+.note {
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.6rem;
+  font-size: 0.9rem;
+  border: 1px solid rgba(250, 204, 21, 0.3);
+  background: rgba(250, 204, 21, 0.08);
+  color: #facc15;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: 1rem;
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-soft);
+  padding: 1rem 1.1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+
+  span {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  padding: 0.55rem 0.7rem;
+  font-size: 0.9rem;
+  outline: none;
+  resize: vertical;
+
+  &:focus {
+    border-color: var(--color-accent-soft);
+    box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.5);
+  }
+}
+
+.textarea {
+  min-height: 120px;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.actions {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit {
+  border-radius: 999px;
+  padding: 0.45rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background: var(--color-border-subtle);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}

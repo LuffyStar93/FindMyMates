@@ -1,0 +1,162 @@
+@use '@/styles/variables' as *;
+
+.root {
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem 2.5rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  background:
+    radial-gradient(circle at top left, rgba(123, 92, 255, 0.25), transparent 55%),
+    var(--color-surface);
+  border-radius: 1.25rem;
+  padding: 1.75rem 1.9rem 1.5rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border-soft);
+}
+
+.header {
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  margin: 0 0 0.35rem;
+  font-size: 1.6rem;
+  font-weight: 650;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* Formulaire */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.input {
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border-soft);
+  padding: 0.7rem 0.9rem;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  font: inherit;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+
+  &::placeholder {
+    color: var(--color-text-soft);
+  }
+
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.6);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-input-border-focus);
+    box-shadow:
+      0 0 0 1px var(--color-input-border-focus),
+      0 0 18px rgba(123, 92, 255, 0.35);
+    background: var(--color-input-bg-focus);
+  }
+}
+
+/* Feedback */
+
+.error {
+  margin: 0.1rem 0 0.4rem;
+  font-size: 0.85rem;
+  color: var(--color-danger-text);
+  background: var(--color-danger-bg);
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem;
+}
+
+/* Actions */
+
+.actions {
+  margin-top: 0.4rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 1.6rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-strong));
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(17, 24, 39, 0.55);
+  transition:
+    transform 120ms ease-out,
+    box-shadow 120ms ease-out,
+    opacity 120ms ease-out;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.8);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.7);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+/* Bas de carte */
+
+.helper {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-soft);
+  text-align: center;
+}
+
+.link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+  .card {
+    padding-inline: 1.35rem;
+  }
+}
