@@ -37,7 +37,6 @@ jobs:
         working-directory: ./backend
         run: npm run build
 
-      # 1) Upload dist/
       - name: Deploy backend dist via FTP (PREPROD)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -54,7 +53,6 @@ jobs:
             **/tests/**
             **/*.map
 
-      # 2) Préparer un dossier ne contenant QUE package.json + lock
       - name: Prepare backend package files (PREPROD)
         working-directory: ./backend
         run: |
@@ -62,7 +60,6 @@ jobs:
           mkdir _pkg
           cp package.json package-lock.json _pkg/
 
-      # 3) Upload uniquement ces 2 fichiers
       - name: Deploy backend package files via FTP (PREPROD)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -95,7 +92,6 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      # Build avec l'URL API préprod forcée
       - name: Build frontend
         working-directory: ./frontend
         run: npm run build
@@ -105,11 +101,13 @@ jobs:
       - name: Deploy frontend via FTP (PREPROD)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.PREPROD_FTP_SERVER }}
-          username: ${{ secrets.PREPROD_FTP_USERNAME }}
-          password: ${{ secrets.PREPROD_FTP_PASSWORD }}
-          server-dir: ${{ secrets.PREPROD_FTP_DIR }} 
+          server: ${{ secrets.PREPROD_FTP_BACKEND_SERVER }}
+          username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
+          password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
+
+          server-dir: ${{ secrets.PREPROD_FTP_DIR }} # ex: /preprod-fmm.chagnonmaxime.fr/luffystar93_preprod/
           local-dir: ./frontend/dist/
+
           dangerous-clean-slate: false
           exclude: |
             **/.git*
