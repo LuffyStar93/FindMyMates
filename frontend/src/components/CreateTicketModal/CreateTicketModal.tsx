@@ -20,7 +20,7 @@ type Props = {
 }
 
 export default function CreateTicketModal({
-  gameId,
+  // gameId,
   gameName,
   modes,
   isOpen,
