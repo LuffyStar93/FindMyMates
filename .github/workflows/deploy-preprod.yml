@@ -95,9 +95,12 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
+      # Build avec l'URL API préprod forcée
       - name: Build frontend
         working-directory: ./frontend
         run: npm run build
+        env:
+          VITE_API_URL: https://preprod-fmm.chagnonmaxime.fr/api
 
       - name: Deploy frontend via FTP (PREPROD)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -105,9 +108,11 @@ jobs:
           server: ${{ secrets.PREPROD_FTP_SERVER }}
           username: ${{ secrets.PREPROD_FTP_USERNAME }}
           password: ${{ secrets.PREPROD_FTP_PASSWORD }}
-          server-dir: ${{ secrets.PREPROD_FTP_DIR }} # = /luffystar93_preprod/
+          server-dir: ${{ secrets.PREPROD_FTP_DIR }} 
           local-dir: ./frontend/dist/
-          dangerous-clean-slate: true
+          dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/node_modules/**
+            api/**
+            api/.htaccess
