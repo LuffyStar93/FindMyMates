@@ -1,0 +1,112 @@
+name: Deploy FMM PREPROD (Front + Back) to o2switch
+
+on:
+  push:
+    branches:
+      - preprod
+
+concurrency:
+  group: deploy-preprod
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Build & Deploy Backend (PREPROD)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: ./backend/package-lock.json
+
+      - name: Install dependencies (backend)
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run tests (backend)
+        working-directory: ./backend
+        run: npm test
+
+      - name: Build backend (tsc)
+        working-directory: ./backend
+        run: npm run build
+
+      - name: Deploy backend dist via FTP (PREPROD)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.PREPROD_FTP_BACKEND_SERVER }}
+          username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
+          password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
+          server-dir: ${{ secrets.PREPROD_FTP_BACKEND_SERVER_DIR }}dist/
+          local-dir: ./backend/dist/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/*.map
+
+      - name: Prepare backend package files (PREPROD)
+        working-directory: ./backend
+        run: |
+          rm -rf _pkg
+          mkdir _pkg
+          cp package.json package-lock.json _pkg/
+
+      - name: Deploy backend package files via FTP (PREPROD)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.PREPROD_FTP_BACKEND_SERVER }}
+          username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
+          password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
+          server-dir: ${{ secrets.PREPROD_FTP_BACKEND_SERVER_DIR }}
+          local-dir: ./backend/_pkg/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+
+  frontend:
+    name: Build & Deploy Frontend (PREPROD)
+    runs-on: ubuntu-latest
+    needs: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - name: Install dependencies (frontend)
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          VITE_API_URL: https://preprod-fmm.chagnonmaxime.fr/api
+
+      - name: Deploy frontend via FTP (PREPROD)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.PREPROD_FTP_BACKEND_SERVER }}
+          username: ${{ secrets.PREPROD_FTP_BACKEND_USERNAME }}
+          password: ${{ secrets.PREPROD_FTP_BACKEND_PASSWORD }}
+          server-dir: ${{ secrets.PREPROD_FTP_DIR }}
+          local-dir: ./frontend/dist/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/node_modules/**
+            api/**
+            api/.htaccess
+            .htaccess

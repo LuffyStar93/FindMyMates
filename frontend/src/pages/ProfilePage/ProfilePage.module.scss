@@ -1,0 +1,351 @@
+@use '@/styles/variables' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 1rem 0 2.5rem;
+}
+
+/* Messages globaux (erreurs / succès) */
+.feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.error {
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  background: rgba(220, 38, 38, 0.12);
+  color: #fecaca;
+}
+
+.success {
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  background: rgba(34, 197, 94, 0.14);
+  color: #bbf7d0;
+}
+
+/* CARDS GÉNÉRALES */
+
+.card {
+  background: var(--color-surface);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 0.9rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* FORM FIELDS */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.9rem;
+}
+
+.fieldInline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.7rem;
+  font-size: 0.9rem;
+}
+
+.field span {
+  color: var(--color-text-muted);
+}
+
+/* base inputs/selects (globaux) */
+input,
+select {
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.45rem 0.6rem;
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+  font: inherit;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+/* input qui ressort un peu plus (à utiliser via className={s.input}) */
+.input {
+  border-radius: 0.55rem;
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.5rem 0.65rem;
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.7);
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
+}
+
+.input:focus {
+  border-color: var(--color-accent);
+  box-shadow:
+    0 0 0 1px var(--color-accent),
+    0 0 18px rgba(123, 92, 255, 0.35);
+}
+
+/* champs lecture seule (Email / Nom / Pseudo) */
+.readonly {
+  background: var(--color-surface-soft);
+  border-color: var(--color-border-subtle);
+  color: var(--color-text-muted);
+  cursor: default;
+  box-shadow: none;
+}
+
+input.readonly[readonly] {
+  pointer-events: none;
+}
+
+/* petit texte d’aide sous le champ Discord */
+.helpText {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  color: var(--color-text-soft);
+}
+
+/* select utilisé pour jeux / modes / rangs */
+.select {
+  min-width: 180px;
+}
+
+/* RANGS */
+
+.rankBlock {
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed rgba(148, 163, 184, 0.3);
+}
+
+.actionsRight {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.6rem;
+}
+
+/* bouton principal (rangs, profil, mot de passe) */
+.btnPrimary {
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid var(--color-accent-soft);
+  background: var(--color-accent);
+  color: #f9fafb;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.65);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: #6d4afc;
+  border-color: var(--color-accent-soft);
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.85);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* liste des rangs existants */
+
+.ranksList {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rankItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.6rem;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border-subtle);
+  font-size: 0.9rem;
+}
+
+.rankItem strong {
+  font-weight: 600;
+}
+
+.rankItem em {
+  font-style: normal;
+  color: var(--color-accent-soft);
+}
+
+.rankItemActions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.rankItemActions button {
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.rankItemActions button:hover {
+  border-color: var(--color-accent-soft);
+}
+
+/* MOT DE PASSE */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.8rem;
+}
+
+/* STATS */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.85rem;
+}
+
+.stat {
+  background: var(--color-surface-soft);
+  border-radius: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--color-border-subtle);
+  font-size: 0.85rem;
+}
+
+.stat strong {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.2rem;
+}
+
+/* HISTORIQUE TICKETS */
+
+.ticketsSection {
+  margin-top: 0.5rem;
+}
+
+.ticketsSection h2 {
+  margin-bottom: 0.8rem;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.9rem;
+}
+
+.cardTicket {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.cardTicket:hover {
+  transform: translateY(-1px);
+  border-color: var(--color-accent-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.cardTicket img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.content {
+  padding: 0.7rem 0.85rem 0.8rem;
+}
+
+.content h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+}
+
+.content div {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.content time {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-soft);
+}
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .card {
+    padding: 1rem 0.9rem;
+  }
+
+  .fieldInline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .select {
+    width: 100%;
+  }
+
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+}

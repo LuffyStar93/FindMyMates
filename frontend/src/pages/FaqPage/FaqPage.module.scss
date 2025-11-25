@@ -1,0 +1,71 @@
+@use '@/styles/variables' as *;
+
+.root {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 0 2.5rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  margin: 0 0 0.4rem;
+  font-size: 1.7rem;
+  font-weight: 650;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 1rem;
+  padding: 1rem 1.2rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.question {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.answer {
+  font-size: 0.9rem;
+  color: var(--color-text-soft);
+  line-height: 1.55;
+
+  strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .item {
+    padding-inline: 0.9rem;
+  }
+}

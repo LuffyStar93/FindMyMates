@@ -1,0 +1,55 @@
+# --- DEPENDENCIES ---
+node_modules/
+
+# --- BUILD OUTPUT ---
+dist/
+dist-ssr/
+*.local
+
+# --- ENVIRONNEMENT ---
+.env
+.env.*
+!.env.example
+!.env.preproduction
+!.env.production
+# --- LOGS ---
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- EDITORS ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# --- SYSTEM FILES ---
+.DS_Store
+Thumbs.db
+
+# --- TESTS ---
+coverage/
+*.coverage
+
+# --- TYPESCRIPT ---
+*.tsbuildinfo
+
+# --- VITE ---
+.vite/
+
+# --- CACHE ---
+.cache/
+.parcel-cache/
+
+# --- OPTIONAL / TOOLS ---
+*.orig
+*.backup
+
+# --- IMAGES GENERATED / TEMP ---
+temp/
+tmp/

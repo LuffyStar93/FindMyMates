@@ -1,0 +1,6 @@
+@mixin card {
+  border-radius: $radius;
+  padding: $space * 2;
+  box-shadow: 0 6px 24px rgba(0,0,0,.12);
+  background: #111827;
+}
