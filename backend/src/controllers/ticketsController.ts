@@ -22,12 +22,12 @@ const ticketInclude = [
   {
     model: Users,
     as: "creator",
-    attributes: ["id", "pseudo", "name", "discord_tag","reputationScore"],
+    attributes: ["id", "pseudo", "name", "discord_tag", "reputationScore"],
   },
   {
     model: Users,
     as: "participants",
-    attributes: ["id", "pseudo", "name", "discord_tag","reputationScore"],
+    attributes: ["id", "pseudo", "name", "discord_tag", "reputationScore"],
     through: {
       attributes: ["joinedAt"],
     },
@@ -36,13 +36,19 @@ const ticketInclude = [
 
 /**
  * GET /api/tickets
+ * GET /api/games/:gameId/tickets
  */
 export const listTickets = async (req: Request, res: Response) => {
   try {
+    // ⚠️ On supporte aussi bien :
+    // - /api/tickets?gameId=1
+    // - /api/games/:gameId/tickets
+    const gameIdFromParams = (req.params as any).gameId as string | undefined;
+
     const {
       status,
       modeId,
-      gameId,
+      gameId: gameIdFromQuery,
       ranked,
       page = 1,
       limit = 50,
@@ -57,6 +63,9 @@ export const listTickets = async (req: Request, res: Response) => {
       order?: "asc" | "desc";
     };
 
+    // gameId effectif : query > params
+    const effectiveGameId = gameIdFromQuery ?? gameIdFromParams;
+
     const pageNum = Math.max(1, Number(page) || 1);
     const limitNum = Math.min(200, Math.max(1, Number(limit) || 50));
     const offset = (pageNum - 1) * limitNum;
@@ -67,11 +76,13 @@ export const listTickets = async (req: Request, res: Response) => {
 
     const include = [...ticketInclude] as any[];
 
-    if (gameId || ranked) {
+    if (effectiveGameId || ranked) {
+      const gIdNum = effectiveGameId ? Number(effectiveGameId) : undefined;
+
       include[0] = {
         ...include[0],
         where: {
-          ...(gameId ? { gameId: Number(gameId) } : {}),
+          ...(gIdNum && Number.isFinite(gIdNum) ? { gameId: gIdNum } : {}),
           ...(ranked === "true"
             ? { isRanked: true }
             : ranked === "false"
@@ -150,11 +161,19 @@ export const createTicket = async (req: Request, res: Response) => {
     };
 
     if (!userId || !gameModeId) {
-      return res.status(400).json({ message: "userId and gameModeId are required" });
+      return res
+        .status(400)
+        .json({ message: "userId and gameModeId are required" });
     }
 
-    if (authRole !== "Admin" && authRole !== "Moderator" && Number(userId) !== authUserId) {
-      return res.status(403).json({ message: "You cannot create a ticket for another user" });
+    if (
+      authRole !== "Admin" &&
+      authRole !== "Moderator" &&
+      Number(userId) !== authUserId
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You cannot create a ticket for another user" });
     }
 
     const mode = await GameModes.findByPk(Number(gameModeId));
@@ -165,9 +184,9 @@ export const createTicket = async (req: Request, res: Response) => {
     const maxPlayers = Number((mode as any).playersMax ?? 1) || 1;
 
     if (maxPlayers < 2) {
-      return res
-        .status(400)
-        .json({ message: "This mode does not support tickets (playersMax < 2)" });
+      return res.status(400).json({
+        message: "This mode does not support tickets (playersMax < 2)",
+      });
     }
 
     let cap = Number(capacity);
@@ -178,7 +197,9 @@ export const createTicket = async (req: Request, res: Response) => {
     if (cap > maxPlayers) cap = maxPlayers;
 
     if (cap < 2) {
-      return res.status(400).json({ message: "Capacity must be at least 2 players" });
+      return res
+        .status(400)
+        .json({ message: "Capacity must be at least 2 players" });
     }
 
     const ticket = await Tickets.create({
@@ -198,7 +219,9 @@ export const createTicket = async (req: Request, res: Response) => {
       joinedAt: new Date(),
     });
 
-    const reloaded = await Tickets.findByPk(ticket.id, { include: ticketInclude });
+    const reloaded = await Tickets.findByPk(ticket.id, {
+      include: ticketInclude,
+    });
 
     return res.status(201).json({ ok: true, ticket: reloaded ?? ticket });
   } catch (e) {
@@ -225,8 +248,14 @@ export const joinTicket = async (req: Request, res: Response) => {
 
     const authUserId = Number(auth.id);
     const authRole = String(auth.role || "User");
-    if (authRole !== "Admin" && authRole !== "Moderator" && Number(userId) !== authUserId) {
-      return res.status(403).json({ message: "You cannot join on behalf of another user" });
+    if (
+      authRole !== "Admin" &&
+      authRole !== "Moderator" &&
+      Number(userId) !== authUserId
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You cannot join on behalf of another user" });
     }
 
     const ticket = await Tickets.findByPk(ticketId, { include: ticketInclude });
@@ -236,7 +265,9 @@ export const joinTicket = async (req: Request, res: Response) => {
       return res.status(409).json({ message: "Ticket is closed" });
     }
     if (!ticket.isActive) {
-      return res.status(409).json({ message: "Ticket is full or not active" });
+      return res
+        .status(409)
+        .json({ message: "Ticket is full or not active" });
     }
 
     const already = await UserTicket.findOne({ where: { userId, ticketId } });
@@ -260,7 +291,9 @@ export const joinTicket = async (req: Request, res: Response) => {
     }
     await ticket.save();
 
-    const updated = await Tickets.findByPk(ticket.id, { include: ticketInclude });
+    const updated = await Tickets.findByPk(ticket.id, {
+      include: ticketInclude,
+    });
 
     res.json({ ok: true, ticket: updated ?? ticket });
   } catch (e) {
@@ -331,7 +364,8 @@ export const updateTicket = async (req: Request, res: Response) => {
       mode = await GameModes.findByPk(ticket.gameModeId);
     }
 
-    const maxPlayers = Number((mode as any)?.playersMax ?? ticket.capacity ?? 1) || 1;
+    const maxPlayers =
+      Number((mode as any)?.playersMax ?? ticket.capacity ?? 1) || 1;
 
     if (capacity !== undefined) {
       let cap = Number(capacity);
@@ -352,7 +386,8 @@ export const updateTicket = async (req: Request, res: Response) => {
       }
 
       ticket.capacity = cap;
-      ticket.isActive = ticket.status === "open" && ticket.nbPlayers < ticket.capacity;
+      ticket.isActive =
+        ticket.status === "open" && ticket.nbPlayers < ticket.capacity;
     }
 
     if (status !== undefined) {
@@ -369,7 +404,9 @@ export const updateTicket = async (req: Request, res: Response) => {
 
     await ticket.save();
 
-    const updated = await Tickets.findByPk(ticket.id, { include: ticketInclude });
+    const updated = await Tickets.findByPk(ticket.id, {
+      include: ticketInclude,
+    });
 
     res.json({ ok: true, ticket: updated ?? ticket });
   } catch (e) {
@@ -411,7 +448,9 @@ export const closeTicketByOwner = async (req: Request, res: Response) => {
     ticket.endedAt = ticket.endedAt ?? new Date();
     await ticket.save();
 
-    const updated = await Tickets.findByPk(ticket.id, { include: ticketInclude });
+    const updated = await Tickets.findByPk(ticket.id, {
+      include: ticketInclude,
+    });
 
     res.json({ ok: true, ticket: updated ?? ticket });
   } catch (e) {
