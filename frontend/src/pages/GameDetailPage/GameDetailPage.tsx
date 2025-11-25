@@ -122,10 +122,12 @@ export default function GameDetailPage() {
     setParams(next, { replace: true })
   }
 
+  // Si on passe sur un mode non classé, on nettoie rankId
   useEffect(() => {
     if (!modeIsRanked && rankId) {
       setParam('rankId', '')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modeIsRanked])
 
   const lastReqId = useRef(0)
@@ -141,9 +143,12 @@ export default function GameDetailPage() {
 
     ;(async () => {
       try {
-        const { data } = await api.get(`/games/${gameId}/tickets`, {
+        // 🔥 On tape sur /tickets avec gameId en query
+        const { data } = await api.get('/tickets', {
           params: {
+            gameId, // utilisé par le back pour filtrer le jeu
             modeId: modeId || undefined,
+            // rankId n’est pas encore utilisé côté back mais on le laisse en query
             rankId: modeIsRanked ? (rankId || undefined) : undefined,
             status: 'open',
             page,
@@ -188,7 +193,7 @@ export default function GameDetailPage() {
               raw.gameMode?.name ??
               '',
             current: Number.isFinite(current) ? current : 0,
-            max: Number.isFinite(max) && max > 0 ? max : current || 1, // 👈 plus de /0
+            max: Number.isFinite(max) && max > 0 ? max : current || 1,
             isRanked: !!(raw.isRanked ?? raw.is_ranked ?? raw.gameMode?.isRanked),
             ownerId:
               Number(raw.ownerId ?? raw.userId ?? raw.UserId ?? raw.creator?.id) ||

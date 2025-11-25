@@ -16,35 +16,64 @@ export default function RegisterPage() {
   const [confirm, setConfirm] = useState('')
 
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
+  // Erreur globale + erreurs par champ
+  const [globalError, setGlobalError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    setError(null)
+    setGlobalError(null)
+    setFieldErrors({})
 
+    // Petites validations front rapides
     if (!name || !pseudo || !email || !password) {
-      setError('Merci de renseigner tous les champs.')
+      setGlobalError('Merci de renseigner tous les champs.')
       return
     }
     if (password !== confirm) {
-      setError('Les mots de passe ne correspondent pas.')
+      setFieldErrors({ password: 'Les mots de passe ne correspondent pas.' })
+      setGlobalError('Les mots de passe ne correspondent pas.')
       return
     }
 
     try {
       setSubmitting(true)
+
       await api.post('/auth/register', { email, pseudo, name, password })
       await login(email, password)
+
       const redirectTo = (location.state?.from as any)?.pathname || '/profile'
       navigate(redirectTo, { replace: true })
     } catch (e: any) {
       const data = e?.response?.data
-      const msg: string =
-        (typeof data?.message === 'string' && data.message) ||
-        (typeof data?.error === 'string' && data.error) ||
-        (typeof e?.message === 'string' && e.message) ||
-        'Inscription impossible.'
-      setError(msg)
+      let global = 'Inscription impossible.'
+      const perField: Record<string, string> = {}
+
+      // Récupère les erreurs Zod du back
+      if (data?.errors && typeof data.errors === 'object') {
+        for (const [field, messages] of Object.entries<any>(data.errors)) {
+          if (Array.isArray(messages) && messages.length > 0) {
+            perField[field] = String(messages[0])
+          }
+        }
+
+        if (Object.keys(perField).length > 0) {
+          // 👉 On met un message global générique pour éviter le doublon
+          global = 'Merci de corriger les erreurs ci-dessous.'
+        } else if (typeof data.message === 'string') {
+          global = data.message
+        }
+      } else if (typeof data?.message === 'string') {
+        global = data.message
+      } else if (typeof data?.error === 'string') {
+        global = data.error
+      } else if (typeof e?.message === 'string') {
+        global = e.message
+      }
+
+      setFieldErrors(perField)
+      setGlobalError(global)
     } finally {
       setSubmitting(false)
     }
@@ -61,6 +90,9 @@ export default function RegisterPage() {
         </header>
 
         <form className={s.form} onSubmit={onSubmit} noValidate>
+          {/* Erreur globale en haut */}
+          {globalError && <p className={s.error}>{globalError}</p>}
+
           <label className={s.field}>
             <span className={s.label}>Nom</span>
             <input
@@ -70,6 +102,7 @@ export default function RegisterPage() {
               placeholder="John Doe"
               autoComplete="name"
             />
+            {fieldErrors.name && <p className={s.error}>{fieldErrors.name}</p>}
           </label>
 
           <label className={s.field}>
@@ -81,6 +114,7 @@ export default function RegisterPage() {
               placeholder="jdoe"
               autoComplete="nickname"
             />
+            {fieldErrors.pseudo && <p className={s.error}>{fieldErrors.pseudo}</p>}
           </label>
 
           <label className={s.field}>
@@ -93,6 +127,7 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
             />
+            {fieldErrors.email && <p className={s.error}>{fieldErrors.email}</p>}
           </label>
 
           <label className={s.field}>
@@ -105,6 +140,7 @@ export default function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
             />
+            {fieldErrors.password && <p className={s.error}>{fieldErrors.password}</p>}
           </label>
 
           <label className={s.field}>
@@ -118,8 +154,6 @@ export default function RegisterPage() {
               placeholder="••••••••"
             />
           </label>
-
-          {error && <p className={s.error}>{error}</p>}
 
           <div className={s.actions}>
             <button className={s.submit} type="submit" disabled={submitting}>
