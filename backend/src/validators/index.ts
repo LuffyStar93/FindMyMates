@@ -5,12 +5,17 @@ import { z } from "zod";
 export function validateBody<T extends z.ZodTypeAny>(schema: T): RequestHandler {
   return (req, res, next) => {
     const parsed = schema.safeParse(req.body);
+
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+
       return res.status(400).json({
-        message: "Invalid body",
-        details: parsed.error.flatten(),
+        message: "Données invalides",
+        errors: flat.fieldErrors,   // { email: ["Email invalide"], password: ["..."], ... }
+        formErrors: flat.formErrors // erreurs globales éventuelles
       });
     }
+
     req.body = parsed.data as unknown as typeof req.body;
     next();
   };
@@ -20,12 +25,17 @@ export function validateBody<T extends z.ZodTypeAny>(schema: T): RequestHandler 
 export function validateQuery<T extends z.ZodTypeAny>(schema: T): RequestHandler {
   return (req, res, next) => {
     const parsed = schema.safeParse(req.query);
+
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+
       return res.status(400).json({
-        message: "Invalid query",
-        details: parsed.error.flatten(),
+        message: "Paramètres de requête invalides",
+        errors: flat.fieldErrors,
+        formErrors: flat.formErrors,
       });
     }
+
     (req as any).query = parsed.data;
     next();
   };
@@ -35,12 +45,17 @@ export function validateQuery<T extends z.ZodTypeAny>(schema: T): RequestHandler
 export function validateParams<T extends z.ZodTypeAny>(schema: T): RequestHandler {
   return (req, res, next) => {
     const parsed = schema.safeParse(req.params);
+
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+
       return res.status(400).json({
-        message: "Invalid params",
-        details: parsed.error.flatten(),
+        message: "Paramètres d'URL invalides",
+        errors: flat.fieldErrors,
+        formErrors: flat.formErrors,
       });
     }
+
     (req as any).params = parsed.data;
     next();
   };

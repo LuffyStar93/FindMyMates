@@ -41,6 +41,17 @@
   --transition-normal: 220ms ease-out;
 
   --nav-height: 56px;
+
+  /* Select */
+  --fmm-select-bg: #f9fafb;
+  --fmm-select-fg: #020617;
+
+
+  --fmm-badge-ranked-bg: #16a34a;
+  --fmm-badge-ranked-fg: #f9fafb;   
+
+  --fmm-badge-unranked-bg: #e5e7eb;
+  --fmm-badge-unranked-fg: #020617;
 }
 
 /* Thème sombre */
@@ -69,6 +80,17 @@
   --color-danger-text: #fca5a5;
 
   --shadow-soft: 0 22px 50px rgba(0, 0, 0, 0.55);
+
+  /* Select */
+  --fmm-select-bg: #020617;
+  --fmm-select-fg: #e5e7eb;
+
+  /* Badges tickets */
+  --fmm-badge-ranked-bg: #22c55e;
+  --fmm-badge-ranked-fg: #022c22;
+
+  --fmm-badge-unranked-bg: #0f172a;
+  --fmm-badge-unranked-fg: #e5e7eb;
 }
 
 $color-bg: var(--color-bg);
@@ -91,3 +113,4 @@ $shadow-soft: var(--shadow-soft);
 $radius-sm: var(--radius-sm);
 $radius-md: var(--radius-md);
 $radius-lg: var(--radius-lg);
+

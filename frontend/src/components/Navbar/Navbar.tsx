@@ -94,17 +94,17 @@ export default function Navbar() {
                 {user.pseudo ?? user.email}
               </NavLink>
               <button type="button" className="btn" onClick={logout}>
-                Logout
+                Déconnexion
               </button>
             </>
           ) : (
             <>
               <NavLink to="/login" className={navLinkClass}>
-                Login
+                Connexion
               </NavLink>
               <span className={s.dot}>·</span>
               <NavLink to="/register" className={navLinkClass}>
-                Register
+                Inscription
               </NavLink>
             </>
           )}
